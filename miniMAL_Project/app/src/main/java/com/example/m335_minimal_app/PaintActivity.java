@@ -1,29 +1,17 @@
 package com.example.m335_minimal_app;
 
-import static android.provider.MediaStore.Images.Media.getBitmap;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class PaintActivity extends AppCompatActivity {
 /*Version1
@@ -36,73 +24,84 @@ public class PaintActivity extends AppCompatActivity {
     boolean isPainting = false;
     int backgroundColor = 0xff000000;
 */
-
-    private static final String TAG = "PaintActivity";
-
-    Display display = getWindowManager().getDefaultDisplay();
-
-    public float getDispWidth() {
-        return dispWidth;
-    }
-
-    public float getDispHeight() {
-        return dispHeight;
-    }
-
-    final float dispWidth = (float)display.getWidth();
-    final float dispHeight = (float)display.getHeight();
-
-    PaintView paintView = new PaintView(this);
-    ImageButton btn_share;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        btn_share = findViewById(R.id.btn_share);
-
-        LinearLayout layout = (LinearLayout) findViewById(R.id.vertical_layout);
-
-        paintView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        layout.addView(paintView);
+        //PaintView paintView = new PaintView(this);
         setContentView(R.layout.activity_paint);
 
-        ButtonShare();
-    }
+        LinearLayout layout = (LinearLayout) findViewById(R.id.vertical_layout);
+        PaintView paintView = new PaintView(this);
+        paintView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        layout.addView(paintView);
 
-    protected Uri saveImage(Bitmap image) {
-        //Bitmap image = paintView.getBitmap();
-        //todo gets compressed here
-        File imagesFolder = new File(getCacheDir(), "images");
-        Uri uri = null;
-        try {
-            imagesFolder.mkdirs();
-            File file = new File(imagesFolder, "shared_image.png");
-
-            FileOutputStream stream = new FileOutputStream(file);
-            image.compress(Bitmap.CompressFormat.PNG, 90, stream);
-            stream.flush();
-            stream.close();
-            uri = FileProvider.getUriForFile(this, "com.mydomain.fileprovider", file);
-
-        } catch (IOException e) {
-            Log.d(TAG, "IOException while trying to write file for sharing: " + e.getMessage());
-        }
-        return uri;
-    }
-
-    private void shareImageUri(Uri uri){
-        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setType("image/png");
-        startActivity(intent);
-    }
-
-    private void ButtonShare(){
-        btn_share.setOnClickListener(view -> {
-            shareImageUri(saveImage(paintView.getBitmap()));
-        });
     }
 
 }
+
+// todo Version2
+           /* Display display = getWindowManager().getDefaultDisplay();
+        final float displayWidth = (float)display.getWidth();
+        final float displayHeight = (float)display.getHeight();
+
+        paintView = new PaintView(this, display.getWidth(), display.getHeight());
+        paintView.changeBackgroundColor(backgroundColor);
+        paintView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        paintView.startPaint((int) motionEvent.getX(), (int) motionEvent.getY());
+                        isPainting = true;
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        isPainting = false;
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        if(isPainting){
+                            paintView.continuePaint((int) motionEvent.getX(), (int) motionEvent.getY());
+                            return true;
+                        }
+
+                }
+                return false;
+            }
+        });
+        setContentView(paintView);
+        //brushDefault();*/
+
+
+//todo use maybe old code
+   /* private void brushDefault() {
+        brush.setAntiAlias(true);
+        brush.setColor(Color.rgb(00,200,0)); //51,51,51 / #333333
+        brush.setStyle(Paint.Style.STROKE);
+        brush.setStrokeJoin(Paint.Join.ROUND);
+        brush.setStrokeWidth(10f);
+    }
+
+    public boolean onTouchEvent(MotionEvent event){
+        float touchX = event.getX();
+        float touchY = event.getY();
+
+        switch(event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                path.moveTo(touchX, touchY);
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                path.lineTo(touchX, touchY);
+                break;
+            default:
+                return false;
+        }
+        postInvalidate();
+        return false;
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas){
+        canvas.drawPath(path, brush);
+    }*/

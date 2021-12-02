@@ -11,21 +11,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
 public class PaintView extends View {
 
     public ViewGroup.LayoutParams params;
     private final Path path = new Path();
     private final Paint brush = new Paint();
 
-    private static Bitmap bitmap = null;
-
-    PaintActivity paintActivity;
-
     public PaintView(Context context) {
         super(context);
+        setBackgroundColor(Color.WHITE);
 
         brush.setAntiAlias(true);
         brush.setColor(Color.rgb(51,51,51));
@@ -36,10 +30,6 @@ public class PaintView extends View {
         params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         //this.setBackgroundColor(Color.MAGENTA);
-    }
-
-    public static Bitmap getBitmap() {
-        return bitmap;
     }
 
     @Override
@@ -58,19 +48,11 @@ public class PaintView extends View {
                  return false;
          }
          postInvalidate();
-
-
          return false;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-
         canvas.drawPath(path,brush);
-        try {
-            bitmap = Bitmap.createBitmap(getWidth(),getHeight(), Bitmap.Config.RGB_565);
-        }catch(Exception e){}
     }
-
-
 }
