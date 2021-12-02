@@ -32,16 +32,6 @@ import java.util.Date;
 import java.util.Objects;
 
 public class PaintActivity extends AppCompatActivity {
-/*Version1
-    private Paint brush = new Paint();
-    private Path path = new Path();
-*/
-/*Version2
-    PaintView paintView = null;
-    LinearLayout lilay = null;
-    boolean isPainting = false;
-    int backgroundColor = 0xff000000;
-*/
 
     PaintView paintView = null;
 

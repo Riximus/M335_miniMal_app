@@ -75,11 +75,4 @@ public class PaintView extends View {
 
         return bitmap;
     }
-
-
-/*
-    bitmap = Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_8888);
-    Canvas canvas = new Canvas(bitmap);
-        this.draw(canvas);
-*/
 }
