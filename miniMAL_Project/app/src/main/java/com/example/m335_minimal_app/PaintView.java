@@ -26,15 +26,17 @@ public class PaintView extends View {
     private final Path path = new Path();
     private final Paint brush = new Paint();
 
-    private String TAG = "PaintView";
+    private final String TAG = "PaintView";
+
+    Bitmap bitmap = null;
+    Canvas canvas = null;
 
     public PaintView(Context context) {
         super(context);
         setBackgroundColor(Color.WHITE);
 
         brush.setAntiAlias(true);
-        brush.setColor(Color.GREEN);
-        //brush.setColor(Color.rgb(51,51,51));
+        brush.setColor(Color.rgb(51,51,51));
         brush.setStyle(Paint.Style.STROKE);
         brush.setStrokeJoin(Paint.Join.ROUND);
         brush.setStrokeWidth(8f);
@@ -68,42 +70,16 @@ public class PaintView extends View {
         canvas.drawPath(path,brush);
     }
 
-
-    public Bitmap saveSignature(){
-
-        Bitmap  bitmap = Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        this.draw(canvas);
-
-        File file = new File(Environment.getExternalStorageDirectory() + "/sign.png");
-
-        try {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    protected Bitmap createBitmap(){
+        bitmap = Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_8888);
 
         return bitmap;
     }
 
 
- /*   public static Bitmap getBitmapFromView(View view) {
-        //Define a bitmap with the same size as the view
-        Bitmap returnedBitmap = Bitmap.createBitmap(view.getWidth(),      view.getHeight(), Bitmap.Config.ARGB_8888);
-        //Bind a canvas to it
-        Canvas canvas = new Canvas(returnedBitmap);
-        //Get the view's background
-        Drawable bgDrawable = view.getBackground();
-        if (bgDrawable != null)
-            //has background drawable, then draw it on the canvas
-            bgDrawable.draw(canvas);
-        else
-            //does not have background drawable, then draw white background on the canvas
-            canvas.drawColor(Color.WHITE);
-        // draw the view on the canvas
-        view.draw(canvas);
-        //return the bitmap
-        return returnedBitmap;
-    }*/
-
+/*
+    bitmap = Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_8888);
+    Canvas canvas = new Canvas(bitmap);
+        this.draw(canvas);
+*/
 }

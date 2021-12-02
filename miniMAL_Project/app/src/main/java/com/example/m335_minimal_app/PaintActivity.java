@@ -3,6 +3,8 @@ package com.example.m335_minimal_app;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -21,8 +23,13 @@ import android.widget.LinearLayout;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
 
 public class PaintActivity extends AppCompatActivity {
 /*Version1
@@ -59,39 +66,63 @@ public class PaintActivity extends AppCompatActivity {
     private void ButtonShare (){
         paintView = new PaintView(this);
         btn_share.setOnClickListener(view -> {
-            shareImageUri(saveImage(paintView.saveSignature()));
-            Log.i(TAG, "Share Button works");
+
+            Log.i(TAG, "------------- SHARE BUTTON PRESSED --------");
+            //saveBitmap(paintView.getContext(), paintView.createBitmap());
+            Log.i(TAG, "------------- COULD SAVE ----------");
+            shareBitmap();
+
+            Log.i(TAG, "------ COULD SHARE -------");
         });
     }
 
-    private Uri saveImage(Bitmap image) {
-        File imagesFolder = new File(getCacheDir(), "images");
-        Uri uri = null;
-        try {
-            imagesFolder.mkdirs();
-            File file = new File(imagesFolder, "shared_image.png");
+    public static Uri saveBitmap(Context mContext, Bitmap bitmap){
 
-            FileOutputStream stream = new FileOutputStream(file);
-            image.compress(Bitmap.CompressFormat.PNG, 90, stream);
+        //String mTimeStamp = new SimpleDateFormat("ddMM_yyyy_HHmm").format(new Date());
+
+        String mImageName = "snap_";
+
+        ContextWrapper wrapper = new ContextWrapper(mContext);
+
+        File file = wrapper.getDir("Images",MODE_PRIVATE);
+
+        file = new File(file, "snap_"+ mImageName+".png");
+
+        try{
+
+            OutputStream stream = null;
+
+            stream = new FileOutputStream(file);
+
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,stream);
+
             stream.flush();
+
             stream.close();
-            uri = FileProvider.getUriForFile(this, "com.mydomain.fileprovider", file);
 
-        } catch (IOException e) {
-            Log.d(TAG, "IOException while trying to write file for sharing: " + e.getMessage());
+        }catch (IOException e)
+        {
+            e.printStackTrace();
         }
-        return uri;
+
+        Uri mImageUri = Uri.parse(file.getAbsolutePath());
+
+        return mImageUri;
     }
 
-    private void shareImageUri(Uri uri){
+
+    protected void shareBitmap() {
+
+        String stringUri = "";
+        stringUri = saveBitmap(paintView.getContext(), paintView.createBitmap()).toString();
+        Log.i(TAG, stringUri );
+
         Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setType("image/png");
+        intent.putExtra(Intent.EXTRA_STREAM, saveBitmap(paintView.getContext(), paintView.createBitmap()));
+        intent.setType("image/jpeg");
+        //Intent shareIntent = Intent.createChooser(intent, "Share with :D");
         startActivity(intent);
-    }
-
-
-
+        }
 
 }
